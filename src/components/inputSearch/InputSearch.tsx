@@ -32,6 +32,7 @@ import {
 
 // import ModalWindow from '../ModalWindow/ModalWindow';
 import { NavLink, useNavigate } from "react-router-dom";
+import { style } from "@mui/system";
 
 const API_KEY = "AIzaSyD74dyEu5vEaGZAJZeLLCbZfYMKCvyAooU";
 
@@ -39,7 +40,7 @@ const InputSearch: React.FC = () => {
   const [query, setQuery] = useState(""); // для хранения значения запроса
   const [videos, setVideos] = useState<any[]>([]); //  для хранения результатов поиска видео
   const [searchChange, setSearchChange] = useState(false); // Флаг для отображения изменений в поиске
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list"); 
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -146,10 +147,22 @@ const InputSearch: React.FC = () => {
               <Modal
                 title={<h3>Сохранить запрос </h3>}
                 open={isModalOpen}
-                onOk={handleOk}
                 onCancel={handleCancel}
+                style={{ maxWidth: "510px", textAlign: "center" }}
+                
+
+                footer={[
+                  <Button key="cancel" onClick={handleCancel} style={{ width: "49%", height:"40px", fontSize:"16px" }}>
+                    Не сохранять
+                  </Button>,
+                  <Button key="submit" type="primary" onClick={handleOk} style={{ width: "49%", height:"40px", fontSize:"16px" }}>
+                    Сохранить
+                  </Button>
+                ]}
+
+
               >
-                <Form layout="horizontal">
+                <Form layout="horizontal" >
                   <Form.Item label="Запрос">
                     <Input readOnly placeholder={query} />
                   </Form.Item>
@@ -163,30 +176,32 @@ const InputSearch: React.FC = () => {
                   <Form.Item label="Сортировать по:">
                     <Select>
                       <Select.Option value="demo">Demo</Select.Option>
+                      <Select.Option value="demo">Memo</Select.Option>
                     </Select>
-
-                    <Row>
-                      <Col span={12}>
-                        <Slider
-                          min={1}
-                          max={50}
-                          onChange={onChange}
-                          value={
-                            typeof inputValue === "number" ? inputValue : 0
-                          }
-                        />
-                      </Col>
-                      <Col span={4}>
-                        <InputNumber
-                          min={1}
-                          max={50}
-                          style={{ margin: "0 16px" }}
-                          value={inputValue}
-                          onChange={onChange}
-                        />
-                      </Col>
-                    </Row>
-                  </Form.Item>
+</Form.Item>
+                    <Form.Item label="Максимальное количество" >
+                      <Row  style={{ width: "350px" }}>
+                        <Col span={12}>
+                          <Slider 
+                            min={1}
+                            max={50}
+                            onChange={onChange}
+                            value={
+                              typeof inputValue === "number" ? inputValue : 0
+                            }
+                          />
+                        </Col>
+                        <Col span={4}  >
+                          <InputNumber
+                            min={1}
+                            max={50}
+                            style={{ marginLeft: " 10px" }}
+                            value={inputValue}
+                            onChange={onChange}
+                          />
+                        </Col>
+                      </Row>
+                    </Form.Item>
                 </Form>
               </Modal>
 
@@ -204,10 +219,10 @@ const InputSearch: React.FC = () => {
             <FilterPanelWrapper>
               <p
                 style={{
-                  fontSize: "24px",
+                  fontSize: "24px", fontWeight: "bold"
                 }}
               >
-                Видео по запросу "{query}"
+                Видео по запросу «{query}» 
               </p>
               <div>
                 <FilterPaneButtons onClick={switchToList}>
