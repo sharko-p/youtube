@@ -1,9 +1,9 @@
 import { pathsPublic, pathsPrivate } from "../paths-component/paths";
 import Login from "../../pages/FormLogin/FormLogin";
 import { Navigate } from "react-router-dom";
-import HomePages from "../../pages/HomePages/HomePages";
-// import ModalWindow from '../ModalWindow/ModalWindow';
-// import Registration from "../../pages/FormRegistration/FormRegistration";
+
+import SavedRequests from "../../pages/SavedRequests/SavedRequests";
+import InputSearch from "../inputSearch/InputSearch";
 
 export const publicRoutes = [
   {
@@ -11,10 +11,9 @@ export const publicRoutes = [
     element: <Navigate to={pathsPublic.Login} replace />,
   },
   { pathsPublic: pathsPublic.Login, element: <Login /> },
-  // { pathsPublic: pathsPublic.Registration, element: <Registration /> },
 ];
 
 export const privateRoutes = [
-  { pathsPrivate: pathsPrivate.Search, element: <HomePages /> },
-  // { pathsPrivate: pathsPrivate.SaveRequest, element: <ModalWindow/> },
+  { pathsPrivate: pathsPrivate.SearchVideo, element: <InputSearch /> },
+  { pathsPrivate: pathsPrivate.SavedRequests, element: <SavedRequests /> },
 ];

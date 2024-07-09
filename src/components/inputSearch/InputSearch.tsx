@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Button, Input, Space } from "antd";
 import {
-  Button,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Col,
-  InputNumber,
-  Row,
-  Slider,
-  Space,
-} from "antd";
+  HeartOutlined,
+  AppstoreOutlined,
+  BarsOutlined,
+} from "@ant-design/icons";
+import ModalWindow from "../ModalWindow/ModalWindow";
 
 import {
   WrapperSerch,
@@ -24,47 +19,45 @@ import {
   FilterPanelWrapper,
   FilterPaneButtons,
 } from "./InputSearch.style";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../redux/store";
 import {
-  HeartOutlined,
-  AppstoreOutlined,
-  BarsOutlined,
-} from "@ant-design/icons";
+  setOpenModalWindow,
+  setQuery,
+  setSavedQuery,
+} from "../../redux/slice/savedQueriesSlice";
 
-// import ModalWindow from '../ModalWindow/ModalWindow';
-import { NavLink, useNavigate } from "react-router-dom";
-import { style } from "@mui/system";
+type Video = {
+  id: {
+    videoId: string;
+  };
+  snippet: {
+    title: string;
+    channelTitle: string;
+  };
+  statistics?: {
+    viewCount?: string;
+  };
+};
 
 const API_KEY = "AIzaSyD74dyEu5vEaGZAJZeLLCbZfYMKCvyAooU";
 
 const InputSearch: React.FC = () => {
-  const [query, setQuery] = useState(""); // для хранения значения запроса
-  const [videos, setVideos] = useState<any[]>([]); //  для хранения результатов поиска видео
-  const [searchChange, setSearchChange] = useState(false); // Флаг для отображения изменений в поиске
+  const dispatch = useDispatch<AppDispatch>();
+
+  const query = useSelector((state: RootState) => state.savedQueries.query);
+
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [searchChange, setSearchChange] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   const showModal = () => {
-    setIsModalOpen(true);
+    dispatch(setSavedQuery(query));
+    dispatch(setOpenModalWindow(true));
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const [inputValue, setInputValue] = useState(1);
-
-  const onChange = (value: number | null) => {
-    if (value !== null) {
-      setInputValue(value);
-    }
-  };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
+    dispatch(setQuery(event.target.value));
   };
 
   const handleSubmit = async () => {
@@ -83,15 +76,16 @@ const InputSearch: React.FC = () => {
           },
         }
       );
-      setVideos(response.data.items);
+      const videoItems: Video[] = response.data.items;
+      setVideos(videoItems);
       setSearchChange(true);
-      fetchVideoStatistics(response.data.items);
+      fetchVideoStatistics(videoItems);
     } catch (error) {
       console.error("Error fetching videos:", error);
     }
   };
 
-  const fetchVideoStatistics = async (videos: any[]) => {
+  const fetchVideoStatistics = async (videos: Video[]) => {
     const videoIds = videos.map((video) => video.id.videoId).join(",");
     try {
       const response = await axios.get(
@@ -137,74 +131,14 @@ const InputSearch: React.FC = () => {
                 onChange={handleChange}
                 searchChange={searchChange}
                 suffix={
-                  <HeartOutlined
-                    onClick={showModal}
-                    style={{ cursor: "pointer" }}
-                  />
+                  searchChange && (
+                    <HeartOutlined
+                      onClick={showModal}
+                      style={{ cursor: "pointer" }}
+                    />
+                  )
                 }
               />
-
-              <Modal
-                title={<h3>Сохранить запрос </h3>}
-                open={isModalOpen}
-                onCancel={handleCancel}
-                style={{ maxWidth: "510px", textAlign: "center" }}
-                
-
-                footer={[
-                  <Button key="cancel" onClick={handleCancel} style={{ width: "49%", height:"40px", fontSize:"16px" }}>
-                    Не сохранять
-                  </Button>,
-                  <Button key="submit" type="primary" onClick={handleOk} style={{ width: "49%", height:"40px", fontSize:"16px" }}>
-                    Сохранить
-                  </Button>
-                ]}
-
-
-              >
-                <Form layout="horizontal" >
-                  <Form.Item label="Запрос">
-                    <Input readOnly placeholder={query} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Название"
-                    name="Название"
-                    rules={[{ required: true }]}
-                  >
-                    <Input placeholder="Укажите название" />
-                  </Form.Item>
-                  <Form.Item label="Сортировать по:">
-                    <Select>
-                      <Select.Option value="demo">Demo</Select.Option>
-                      <Select.Option value="demo">Memo</Select.Option>
-                    </Select>
-</Form.Item>
-                    <Form.Item label="Максимальное количество" >
-                      <Row  style={{ width: "350px" }}>
-                        <Col span={12}>
-                          <Slider 
-                            min={1}
-                            max={50}
-                            onChange={onChange}
-                            value={
-                              typeof inputValue === "number" ? inputValue : 0
-                            }
-                          />
-                        </Col>
-                        <Col span={4}  >
-                          <InputNumber
-                            min={1}
-                            max={50}
-                            style={{ marginLeft: " 10px" }}
-                            value={inputValue}
-                            onChange={onChange}
-                          />
-                        </Col>
-                      </Row>
-                    </Form.Item>
-                </Form>
-              </Modal>
-
               <Button
                 type="primary"
                 style={{ width: "150px", height: "50px" }}
@@ -219,10 +153,11 @@ const InputSearch: React.FC = () => {
             <FilterPanelWrapper>
               <p
                 style={{
-                  fontSize: "24px", fontWeight: "bold"
+                  fontSize: "24px",
+                  fontWeight: "bold",
                 }}
               >
-                Видео по запросу «{query}» 
+                Видео по запросу «{query}»
               </p>
               <div>
                 <FilterPaneButtons onClick={switchToList}>
@@ -242,18 +177,22 @@ const InputSearch: React.FC = () => {
             className={viewMode === "grid" ? "gridFilter" : "listFilter"}
           >
             {videos.map((video) => (
-              <ItemVideo key={video.id.videoId}>
+              <ItemVideo key={video.id.videoId}   style={viewMode === "grid" ? {  } : {display: 'flex'}}> 
                 <iframe
                   height="140px"
                   border-radius="10px"
                   src={`https://www.youtube.com/embed/${video.id.videoId}`}
                   title={video.snippet.title}
                 />
-                <div>
+                <div style={{marginLeft:'20px',
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center", }}>
                   <p
                     style={{
-                      margin: "0px",
+                      marginTop: "5px",
                       overflow: "hidden",
+                      fontWeight: "bold",
                       textOverflow: "ellipsis",
                       maxHeight: "70px",
                     }}
@@ -265,8 +204,8 @@ const InputSearch: React.FC = () => {
                   </p>
                   {video.statistics && video.statistics.viewCount && (
                     <p style={{ opacity: "30%", margin: "0px" }}>
-                      {Math.round(video.statistics.viewCount / 1000)} тыс.
-                      просмотров
+                      {Math.round(Number(video.statistics.viewCount) / 1000)}{" "}
+                      тыс. просмотров
                     </p>
                   )}
                 </div>
@@ -275,6 +214,7 @@ const InputSearch: React.FC = () => {
           </WrapperVideo>
         </WrapperSerch>
       </WrapperSerchContainer>
+      <ModalWindow />
     </>
   );
 };

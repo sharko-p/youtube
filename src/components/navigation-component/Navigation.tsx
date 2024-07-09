@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-// import { publicRoutes } from "../routes-component/Routes";
+import HomePage from "../../pages/HomePage/HomePage";
+import InputSearch from "../inputSearch/InputSearch";
 import { publicRoutes, privateRoutes } from "../routes-component/Routes";
 const Navigation: React.FC = () => {
   return (
@@ -12,14 +13,16 @@ const Navigation: React.FC = () => {
             key={route.pathsPublic}
           />
         ))}
-
-        {privateRoutes.map((route: any) => (
-          <Route
-            path={route.pathsPrivate}
-            element={route.element}
-            key={route.pathsPrivate}
-          />
-        ))}
+        <Route path="/YoutubeSPA" element={<HomePage />}>
+          <Route index element={<InputSearch />} />
+          {privateRoutes.map((route: any) => (
+            <Route
+              path={route.pathsPrivate}
+              element={route.element}
+              key={route.pathsPrivate}
+            />
+          ))}
+        </Route>
       </Routes>
     </>
   );

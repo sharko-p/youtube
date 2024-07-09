@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Button, Checkbox, Form, Input, Typography } from "antd";
 
 const WrapperHeader = styled.div`
   display: flex;
@@ -23,6 +22,11 @@ const Ul = styled.ul`
 `;
 const Li = styled.li`
   margin-left: 40px;
+  textDecoration: "none"
+  .active {
+    font-weight: bold;
+    color: red;
+  } 
 `;
 
 export { WrapperHeader, Header, Ul, Li };

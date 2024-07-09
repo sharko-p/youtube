@@ -1,38 +1,14 @@
+import { configureStore } from "@reduxjs/toolkit";
 
-
-
-
-
-
-
-
-import { configureStore } from '@reduxjs/toolkit';
-// import counterReducer from './counterSlice';
+import savedQueriesReducer from "./slice/savedQueriesSlice";
 
 const store = configureStore({
   reducer: {
-    // counter: counterReducer,
-    // ...другие редюсеры, если есть
+    savedQueries: savedQueriesReducer,
   },
-
 });
 
 export default store;
 
-
-/////////////////////////////////////////////////////////////////////////////////
-
-
-// import { combineReducers, configureStore, Store } from "@reduxjs/toolkit";
-// // import taskManagerReducer from "./reducers/taskManagerReducer";
-
-// const rootReducer = combineReducers({ taskManager: taskManagerReducer });
-
-// const store: Store = configureStore({
-//   reducer: rootReducer,
-
-// });
-
-// export type RootState = ReturnType<typeof rootReducer>;
-
-// export { store };
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

@@ -1,13 +1,9 @@
-
 import Navigation from "./components/navigation-component/Navigation";
-
 
 function App() {
   return (
     <div className="App">
-
-
-<Navigation />
+      <Navigation />
     </div>
   );
 }
