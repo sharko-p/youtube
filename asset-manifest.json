@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/youtube/static/js/main.570f07ad.js",
-    "index.html": "/youtube/index.html",
-    "main.570f07ad.js.map": "/youtube/static/js/main.570f07ad.js.map"
+    "main.js": "/account/static/js/main.9dbc45a3.js",
+    "index.html": "/account/index.html",
+    "main.9dbc45a3.js.map": "/account/static/js/main.9dbc45a3.js.map"
   },
   "entrypoints": [
-    "static/js/main.570f07ad.js"
+    "static/js/main.9dbc45a3.js"
   ]
 }
