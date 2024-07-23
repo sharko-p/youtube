@@ -1,6 +1,7 @@
 {
   "name": "youtube",
   "version": "0.1.0",
+  "homepage": "https://sharko-p.github.io/youtube",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
@@ -20,7 +21,6 @@
     "styled-components": "^6.1.8",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://sharko-p.github.io/account",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

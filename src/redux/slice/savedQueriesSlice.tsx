@@ -4,7 +4,7 @@ type Task= {
   title: string;
   maxAmount: number;
   sortBy: string;
-  query: string; // Добавляем query в Task
+  query: string;
 }
 
 type SavedQueriesState= {
@@ -33,7 +33,7 @@ const savedQueriesSlice = createSlice({
       state.savedQueries = action.payload;
       localStorage.setItem("savedQueries", JSON.stringify(state.savedQueries));
     },
-    setOpenModalWindow(state, action: PayloadAction<boolean>) { // Переименуем действие
+    setOpenModalWindow(state, action: PayloadAction<boolean>) { 
       state.openModalWindow = action.payload;
     },
     setCurrentQueryIndex(state, action: PayloadAction<number | null>) {
@@ -61,7 +61,7 @@ const savedQueriesSlice = createSlice({
 
 export const {
   saveQuery,
-  setOpenModalWindow, // Экспортируем переименованное действие
+  setOpenModalWindow, 
   setCurrentQueryIndex,
   setQuery,
   setInputValue,

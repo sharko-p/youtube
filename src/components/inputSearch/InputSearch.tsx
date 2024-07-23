@@ -40,7 +40,8 @@ type Video = {
   };
 };
 
-const API_KEY = "AIzaSyD74dyEu5vEaGZAJZeLLCbZfYMKCvyAooU";
+const API_KEY = process.env.REACT_APP_API_KEY;
+const API_URL = process.env.REACT_APP_YOUTUBE_API_URL;
 
 const InputSearch: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -62,20 +63,17 @@ const InputSearch: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.get(
-        "https://www.googleapis.com/youtube/v3/search",
-        {
-          params: {
-            key: API_KEY,
-            part: "snippet",
-            q: query,
-            type: "video",
-            maxResults: 12,
-            videoEmbeddable: true,
-            videoSyndicated: true,
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/search`, {
+        params: {
+          key: API_KEY,
+          part: "snippet",
+          q: query,
+          type: "video",
+          maxResults: 12,
+          videoEmbeddable: true,
+          videoSyndicated: true,
+        },
+      });
       const videoItems: Video[] = response.data.items;
       setVideos(videoItems);
       setSearchChange(true);
@@ -88,16 +86,13 @@ const InputSearch: React.FC = () => {
   const fetchVideoStatistics = async (videos: Video[]) => {
     const videoIds = videos.map((video) => video.id.videoId).join(",");
     try {
-      const response = await axios.get(
-        "https://www.googleapis.com/youtube/v3/videos",
-        {
-          params: {
-            key: API_KEY,
-            part: "statistics",
-            id: videoIds,
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/videos`, {
+        params: {
+          key: API_KEY,
+          part: "statistics",
+          id: videoIds,
+        },
+      });
 
       setVideos((prevVideos) =>
         prevVideos.map((video, index) => ({
@@ -177,17 +172,24 @@ const InputSearch: React.FC = () => {
             className={viewMode === "grid" ? "gridFilter" : "listFilter"}
           >
             {videos.map((video) => (
-              <ItemVideo key={video.id.videoId}   style={viewMode === "grid" ? {  } : {display: 'flex'}}> 
+              <ItemVideo
+                key={video.id.videoId}
+                style={viewMode === "grid" ? {} : { display: "flex" }}
+              >
                 <iframe
                   height="140px"
                   border-radius="10px"
                   src={`https://www.youtube.com/embed/${video.id.videoId}`}
                   title={video.snippet.title}
                 />
-                <div style={{marginLeft:'20px',
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center", }}>
+                <div
+                  style={{
+                    marginLeft: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
                   <p
                     style={{
                       marginTop: "5px",
@@ -204,8 +206,11 @@ const InputSearch: React.FC = () => {
                   </p>
                   {video.statistics && video.statistics.viewCount && (
                     <p style={{ opacity: "30%", margin: "0px" }}>
-                      {Math.round(Number(video.statistics.viewCount) / 1000)}{" "}
-                      тыс. просмотров
+                      {Number(video.statistics.viewCount) < 1000
+                        ? `${video.statistics.viewCount} просмотров`
+                        : `${Math.round(
+                            Number(video.statistics.viewCount) / 1000
+                          )} тыс. просмотров`}
                     </p>
                   )}
                 </div>

@@ -1,6 +1,6 @@
 export const pathsPublic = {
   Starting: "/",
-  Login: "/account",
+  Login: "/youtube",
 };
 
 export const pathsPrivate = {
