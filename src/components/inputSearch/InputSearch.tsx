@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Space } from "antd";
 import {
@@ -7,7 +7,7 @@ import {
   BarsOutlined,
 } from "@ant-design/icons";
 import ModalWindow from "../ModalWindow/ModalWindow";
-
+import { useLocation } from "react-router-dom";
 import {
   WrapperSerch,
   WrapperSerchContainer,
@@ -45,12 +45,22 @@ const API_URL = process.env.REACT_APP_YOUTUBE_API_URL;
 
 const InputSearch: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const location = useLocation();
   const query = useSelector((state: RootState) => state.savedQueries.query);
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [searchChange, setSearchChange] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [lastQuery, setLastQuery] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchQuery = params.get("search");
+    if (searchQuery) {
+      dispatch(setQuery(searchQuery));
+      handleSubmit(searchQuery);
+    }
+  }, [location.search]);
 
   const showModal = () => {
     dispatch(setSavedQuery(query));
@@ -61,7 +71,7 @@ const InputSearch: React.FC = () => {
     dispatch(setQuery(event.target.value));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (searchQuery = query) => {
     try {
       const response = await axios.get(`${API_URL}/search`, {
         params: {
@@ -77,6 +87,7 @@ const InputSearch: React.FC = () => {
       const videoItems: Video[] = response.data.items;
       setVideos(videoItems);
       setSearchChange(true);
+      setLastQuery(query);
       fetchVideoStatistics(videoItems);
     } catch (error) {
       console.error("Error fetching videos:", error);
@@ -137,7 +148,7 @@ const InputSearch: React.FC = () => {
               <Button
                 type="primary"
                 style={{ width: "150px", height: "50px" }}
-                onClick={handleSubmit}
+                onClick={() => handleSubmit()}
               >
                 Найти
               </Button>
@@ -152,7 +163,7 @@ const InputSearch: React.FC = () => {
                   fontWeight: "bold",
                 }}
               >
-                Видео по запросу «{query}»
+                Видео по запросу «{lastQuery}»
               </p>
               <div>
                 <FilterPaneButtons onClick={switchToList}>

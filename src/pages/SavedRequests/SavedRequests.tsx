@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import {
   saveQuery,
-  setOpenModalWindow, 
+  setOpenModalWindow,
   setCurrentQueryIndex,
   deleteQuery,
 } from "../../redux/slice/savedQueriesSlice";
@@ -14,8 +14,10 @@ import {
   ActionButtons,
 } from "./SavedRequest.style";
 import ModalWindow from "../../components/ModalWindow/ModalWindow";
+import { useNavigate } from "react-router-dom";
 
 const SavedRequests: FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { savedQueries, openModalWindow } = useSelector(
     (state: RootState) => state.savedQueries
@@ -39,6 +41,10 @@ const SavedRequests: FC = () => {
     dispatch(setOpenModalWindow(true));
   };
 
+  const handleClickSearch = (query: string) => {
+    navigate(`/YoutubeSPA?search=${query}`);
+  };
+
   return (
     <>
       <WrapperSavedRequests>
@@ -47,16 +53,22 @@ const SavedRequests: FC = () => {
           {savedQueries.map((request, index) => (
             <div key={index}>
               <RequestsButton>
-                {request.title.toString()}
+                <p
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleClickSearch(request.title.toString())}
+                >
+                  {request.title.toString()}
+                </p>
+
                 <ActionButtons className="action-buttons">
                   <button
-                    style={{ color: "blue" }}
+                    style={{ color: "blue", cursor: "pointer" }}
                     onClick={() => handleEdit(index)}
                   >
                     Изменить
                   </button>
                   <button
-                    style={{ color: "red" }}
+                    style={{ color: "red", cursor: "pointer" }}
                     onClick={() => handleDelete(index)}
                   >
                     Удалить
