@@ -2,7 +2,6 @@ import { WrapperHeader, Header, Ul, Li } from "./homePage.style";
 import { YoutubeOutlined } from "@ant-design/icons";
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
 
-
 const menuItems = [
   { id: 1, title: "Поиск", path: "/YoutubeSPA/SearchVideo" },
   { id: 2, title: "Избранное", path: "/YoutubeSPA/SavedRequests" },
@@ -25,7 +24,6 @@ const HomePage = () => {
               backgroundColor: "transparent",
               fontSize: "48px",
               color: "#b1817d",
-              
             }}
           />
 
@@ -44,7 +42,6 @@ const HomePage = () => {
               ))}
             </Ul>
           </nav>
-   
         </Header>
       </WrapperHeader>
 

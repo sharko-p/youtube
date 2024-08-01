@@ -55,7 +55,7 @@ const SavedRequests: FC = () => {
               <RequestsButton>
                 <p
                   style={{ cursor: "pointer" }}
-                  onClick={() => handleClickSearch(request.title.toString())}
+                  onClick={() => handleClickSearch(request.query.toString())}
                 >
                   {request.title.toString()}
                 </p>

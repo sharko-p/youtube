@@ -25,7 +25,13 @@ import {
   setOpenModalWindow,
   setQuery,
   setSavedQuery,
+  setInputValue,
 } from "../../redux/slice/savedQueriesSlice";
+
+type SavedQuery = {
+  query: string;
+  maxAmount?: number;
+};
 
 type Video = {
   id: {
@@ -58,7 +64,16 @@ const InputSearch: React.FC = () => {
     const searchQuery = params.get("search");
     if (searchQuery) {
       dispatch(setQuery(searchQuery));
-      handleSubmit(searchQuery);
+      const savedQueries: SavedQuery[] = JSON.parse(
+        localStorage.getItem("savedQueries") || "[]"
+      );
+      const savedQuery = savedQueries.find((sq) => sq.query === searchQuery);
+      if (savedQuery) {
+        dispatch(setInputValue(savedQuery.maxAmount || 12));
+        handleSubmit(searchQuery, savedQuery.maxAmount || 12);
+      } else {
+        handleSubmit(searchQuery);
+      }
     }
   }, [location.search]);
 
@@ -71,15 +86,22 @@ const InputSearch: React.FC = () => {
     dispatch(setQuery(event.target.value));
   };
 
-  const handleSubmit = async (searchQuery = query) => {
+  const inputValue = useSelector(
+    (state: RootState) => state.savedQueries.inputValue
+  );
+
+  const handleSubmit = async (
+    searchQuery = query,
+    maxAmount = inputValue || 12
+  ) => {
     try {
       const response = await axios.get(`${API_URL}/search`, {
         params: {
           key: API_KEY,
           part: "snippet",
-          q: query,
+          q: searchQuery,
           type: "video",
-          maxResults: 12,
+          maxResults: maxAmount,
           videoEmbeddable: true,
           videoSyndicated: true,
         },
@@ -87,7 +109,7 @@ const InputSearch: React.FC = () => {
       const videoItems: Video[] = response.data.items;
       setVideos(videoItems);
       setSearchChange(true);
-      setLastQuery(query);
+      setLastQuery(searchQuery);
       fetchVideoStatistics(videoItems);
     } catch (error) {
       console.error("Error fetching videos:", error);
