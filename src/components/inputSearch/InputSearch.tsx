@@ -27,24 +27,7 @@ import {
   setSavedQuery,
   setInputValue,
 } from "../../redux/slice/savedQueriesSlice";
-
-type SavedQuery = {
-  query: string;
-  maxAmount?: number;
-};
-
-type Video = {
-  id: {
-    videoId: string;
-  };
-  snippet: {
-    title: string;
-    channelTitle: string;
-  };
-  statistics?: {
-    viewCount?: string;
-  };
-};
+import { SavedQuery, Video } from "./InputSearch.types";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 const API_URL = process.env.REACT_APP_YOUTUBE_API_URL;
@@ -138,12 +121,8 @@ const InputSearch: React.FC = () => {
     }
   };
 
-  const switchToGrid = () => {
-    setViewMode("grid");
-  };
-
-  const switchToList = () => {
-    setViewMode("list");
+  const switchViewMode = (show: "grid" | "list") => {
+    setViewMode(show);
   };
 
   return (
@@ -187,13 +166,14 @@ const InputSearch: React.FC = () => {
               >
                 Видео по запросу «{lastQuery}»
               </p>
+
               <div>
-                <FilterPaneButtons onClick={switchToList}>
+                <FilterPaneButtons onClick={() => switchViewMode("list")}>
                   <BarsOutlined
                     style={{ opacity: viewMode === "list" ? "100%" : "30%" }}
                   />
                 </FilterPaneButtons>
-                <FilterPaneButtons onClick={switchToGrid}>
+                <FilterPaneButtons onClick={() => switchViewMode("grid")}>
                   <AppstoreOutlined
                     style={{ opacity: viewMode === "grid" ? "100%" : "30%" }}
                   />

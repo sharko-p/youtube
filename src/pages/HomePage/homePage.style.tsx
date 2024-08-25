@@ -22,11 +22,10 @@ const Ul = styled.ul`
 `;
 const Li = styled.li`
   margin-left: 40px;
-  textDecoration: "none"
-  .active {
+  textdecoration: "none" .active {
     font-weight: bold;
     color: red;
-  } 
+  }
 `;
 
 export { WrapperHeader, Header, Ul, Li };

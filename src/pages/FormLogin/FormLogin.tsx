@@ -2,9 +2,10 @@ import React from "react";
 import { LockOutlined, UserOutlined, YoutubeOutlined } from "@ant-design/icons";
 import { Form, Input, Typography } from "antd";
 import { FormBox, WrapperBox, WrapperInput, StyledButton } from "./login.style";
-import { LoginFormValues } from "../../types";
+import { LoginFormValues } from "./form.login.types";
 import { instance } from "../../axois/axiosCreate";
 import { useNavigate } from "react-router-dom";
+import { pathsPrivate } from "../../routes/paths-component/paths";
 
 const { Title } = Typography;
 
@@ -15,11 +16,14 @@ const FormLogin: React.FC = () => {
     console.log("Received values of form: ", values);
   };
 
-  const handleSubmit = async (values: LoginFormValues): Promise<void> => {
+  const handleSubmit = async ({
+    email,
+    password,
+  }: LoginFormValues): Promise<void> => {
     try {
       const userData = {
-        email: values.email,
-        password: values.password,
+        email: email,
+        password: password,
       };
       const response = await instance.post("/auth/login", userData);
 
@@ -27,7 +31,7 @@ const FormLogin: React.FC = () => {
         localStorage.setItem("authToken", response.data.token);
 
         console.log("Успешный вход:", response.data);
-        navigate("/YoutubeSPA/SearchVideo");
+        navigate(pathsPrivate.SearchVideo);
       } else {
         console.error("Ответ сервера не содержит токен.");
       }
@@ -35,6 +39,7 @@ const FormLogin: React.FC = () => {
       console.error("Ошибка при входе:", error);
     }
   };
+
   return (
     <Form
       name="normal_login"

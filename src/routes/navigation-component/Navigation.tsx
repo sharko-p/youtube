@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "../../pages/HomePage/HomePage";
-import InputSearch from "../inputSearch/InputSearch";
+import InputSearch from "../../components/inputSearch/InputSearch";
 import { publicRoutes, privateRoutes } from "../routes-component/Routes";
 const Navigation: React.FC = () => {
   return (

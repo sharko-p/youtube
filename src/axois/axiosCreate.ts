@@ -9,8 +9,6 @@ export const instance = axios.create({
   },
 });
 
-let authToken: string | null = null;
-
 instance.interceptors.request.use((request) => {
   try {
     const token = localStorage.getItem("token") || null;
@@ -24,18 +22,3 @@ instance.interceptors.request.use((request) => {
     return request;
   }
 });
-
-instance.interceptors.request.use((request) => {
-  try {
-    authToken = localStorage.getItem("authToken") || null;
-
-    if (request && request.headers && authToken) {
-      request.headers.Authorization = authToken ? `Bearer ${authToken}` : false;
-    }
-
-    return request;
-  } catch (error) {
-    return request;
-  }
-});
-

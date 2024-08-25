@@ -3,7 +3,7 @@ import Login from "../../pages/FormLogin/FormLogin";
 import { Navigate } from "react-router-dom";
 
 import SavedRequests from "../../pages/SavedRequests/SavedRequests";
-import InputSearch from "../inputSearch/InputSearch";
+import InputSearch from "../../components/inputSearch/InputSearch";
 
 export const publicRoutes = [
   {

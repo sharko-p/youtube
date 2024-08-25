@@ -1,10 +1,10 @@
 import { WrapperHeader, Header, Ul, Li } from "./homePage.style";
 import { YoutubeOutlined } from "@ant-design/icons";
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
-
+import { pathsPrivate } from "../../routes/paths-component/paths";
 const menuItems = [
-  { id: 1, title: "Поиск", path: "/YoutubeSPA/SearchVideo" },
-  { id: 2, title: "Избранное", path: "/YoutubeSPA/SavedRequests" },
+  { id: 1, title: "Поиск", path: pathsPrivate.SearchVideo },
+  { id: 2, title: "Избранное", path: pathsPrivate.SavedRequests },
   { id: 3, title: "Выйти", path: "/" },
 ];
 

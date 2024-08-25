@@ -1,25 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-type Task= {
-  title: string;
-  maxAmount: number;
-  sortBy: string;
-  query: string;
-}
-
-type SavedQueriesState= {
-  savedQueries: Task[];
-  openModalWindow: boolean;
-  currentQueryIndex: number | null;
-  query: string;
-  inputValue: number;
-  savedQuery: string;
-}
+import { v4 as uuidv4 } from "uuid";
+import { Task, SavedQueriesState } from "./savedQueriesSlice.types";
 
 const initialState: SavedQueriesState = {
   savedQueries: JSON.parse(localStorage.getItem("savedQueries") || "[]"),
   openModalWindow: false,
-  currentQueryIndex: null,
+  currentQueryId: null,
   query: "",
   inputValue: 12,
   savedQuery: "",
@@ -33,11 +19,11 @@ const savedQueriesSlice = createSlice({
       state.savedQueries = action.payload;
       localStorage.setItem("savedQueries", JSON.stringify(state.savedQueries));
     },
-    setOpenModalWindow(state, action: PayloadAction<boolean>) { 
+    setOpenModalWindow(state, action: PayloadAction<boolean>) {
       state.openModalWindow = action.payload;
     },
-    setCurrentQueryIndex(state, action: PayloadAction<number | null>) {
-      state.currentQueryIndex = action.payload;
+    setCurrentQueryId(state, action: PayloadAction<string | null>) {
+      state.currentQueryId = action.payload;
     },
     setQuery(state, action: PayloadAction<string>) {
       state.query = action.payload;
@@ -48,12 +34,15 @@ const savedQueriesSlice = createSlice({
     setSavedQuery(state, action: PayloadAction<string>) {
       state.savedQuery = action.payload;
     },
-    addQuery(state, action: PayloadAction<Task>) {
-      state.savedQueries.push(action.payload);
+    addQuery(state, action: PayloadAction<Omit<Task, "id">>) {
+      const newTask: Task = { ...action.payload, id: uuidv4() };
+      state.savedQueries.push(newTask);
       localStorage.setItem("savedQueries", JSON.stringify(state.savedQueries));
     },
-    deleteQuery(state, action: PayloadAction<number>) {
-      state.savedQueries.splice(action.payload, 1);
+    deleteQuery(state, action: PayloadAction<string>) {
+      state.savedQueries = state.savedQueries.filter(
+        (task) => task.id !== action.payload
+      );
       localStorage.setItem("savedQueries", JSON.stringify(state.savedQueries));
     },
   },
@@ -61,8 +50,8 @@ const savedQueriesSlice = createSlice({
 
 export const {
   saveQuery,
-  setOpenModalWindow, 
-  setCurrentQueryIndex,
+  setOpenModalWindow,
+  setCurrentQueryId,
   setQuery,
   setInputValue,
   setSavedQuery,

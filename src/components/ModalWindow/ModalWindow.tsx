@@ -27,8 +27,8 @@ const ModalWindow: React.FC = () => {
   const inputValue = useSelector(
     (state: RootState) => state.savedQueries.inputValue
   );
-  const currentQueryIndex = useSelector(
-    (state: RootState) => state.savedQueries.currentQueryIndex
+  const currentQueryId = useSelector(
+    (state: RootState) => state.savedQueries.currentQueryId
   );
   const savedQueries = useSelector(
     (state: RootState) => state.savedQueries.savedQueries
@@ -38,22 +38,20 @@ const ModalWindow: React.FC = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (currentQueryIndex !== null) {
-      const currentQuery = savedQueries[currentQueryIndex];
+    if (currentQueryId) {
+      const currentQuery = savedQueries.find(
+        (item) => item.id === currentQueryId
+      );
       if (currentQuery) {
         form.setFieldsValue(currentQuery);
-        if (currentQuery.maxAmount !== undefined) {
-          dispatch(setInputValue(currentQuery.maxAmount));
-        } else {
-          dispatch(setInputValue(12));
-        }
+        dispatch(setInputValue(currentQuery.maxAmount || 12));
       }
     } else {
       form.resetFields();
       form.setFieldsValue({ query, maxAmount: 12 });
       dispatch(setInputValue(12));
     }
-  }, [currentQueryIndex, form, savedQueries, dispatch, query]);
+  }, [savedQueries, query]);
 
   const handleCancel = () => {
     dispatch(setOpenModalWindow(false));
@@ -70,13 +68,14 @@ const ModalWindow: React.FC = () => {
     try {
       const values = await form.validateFields();
       const updatedTask = {
+        id: currentQueryId || "",
         title: values.title,
         maxAmount: values.maxAmount || inputValue,
         sortBy: values.sortBy,
-        query: query,
+        query: values.query,
       };
-      if (currentQueryIndex !== null) {
-        dispatch(deleteQuery(currentQueryIndex));
+      if (currentQueryId) {
+        dispatch(deleteQuery(currentQueryId));
       }
       dispatch(addQuery(updatedTask));
       dispatch(setOpenModalWindow(false));
@@ -92,34 +91,35 @@ const ModalWindow: React.FC = () => {
       onCancel={handleCancel}
       style={{ maxWidth: "510px", textAlign: "center" }}
       footer={[
-        <Button
-          key="cancel"
-          onClick={handleCancel}
-          style={{ width: "49%", height: "40px", fontSize: "16px" }}
-        >
-          Не сохранять
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          onClick={handleSubmit}
-          style={{ width: "49%", height: "40px", fontSize: "16px" }}
-        >
-          Сохранить
-        </Button>,
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Button
+            key="cancel"
+            onClick={handleCancel}
+            style={{ width: "220px", height: "40px", fontSize: "16px" }}
+          >
+            Не сохранять
+          </Button>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={handleSubmit}
+            style={{
+              width: "220px",
+              height: "40px",
+              fontSize: "16px",
+              marginLeft: "10px",
+            }}
+          >
+            Сохранить
+          </Button>
+        </div>,
       ]}
     >
       <Form form={form} layout="horizontal">
-        <Form.Item label="Запрос">
-          <Input
-            readOnly
-            value={
-              currentQueryIndex !== null
-                ? savedQueries[currentQueryIndex].query
-                : query
-            }
-          />
+        <Form.Item label="Запрос" name="query">
+          <Input readOnly={!currentQueryId} />
         </Form.Item>
+
         <Form.Item
           label="Название"
           name="title"
@@ -166,5 +166,3 @@ const ModalWindow: React.FC = () => {
 };
 
 export default ModalWindow;
-
-
